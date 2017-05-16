@@ -1,27 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_realloc.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/14 17:01:52 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/14 17:01:56 by ashulha          ###   ########.fr       */
+/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
+/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
-# define MINISHELL_H
-# include "includes/libft/libft.h"
-# include "includes/gnl/get_next_line.h"
-# include <limits.h>
-# define PROMPT (printf("%s ", "💥"))
-# define SPACES " \t\n\r\a"
-# define DELIM "|;"
+#include "minishell.h"
 
-void	*ft_realloc(void *ptr, size_t size);
-char	**ft_strtok(char *s, char *sep);
+void	*ft_realloc(void *ptr, size_t size)
+{
+	char *new_ptr;
 
-
-
-#endif
+	if (ptr && !size)
+	{
+		if (!(new_ptr = (char*)ft_memalloc(1)))
+			return (NULL);
+		ft_memdel(&ptr);
+		return(new_ptr);
+	}
+	if (!(new_ptr = (char*)ft_memalloc(size)))
+		return (NULL);
+	if (ptr)
+	{
+		ft_memcpy(new_ptr, ptr, size);
+		ft_memdel(&ptr);
+	}
+	return (new_ptr);
+}
