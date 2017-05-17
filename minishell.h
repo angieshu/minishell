@@ -15,7 +15,12 @@
 # include "includes/libft/libft.h"
 # include "includes/gnl/get_next_line.h"
 # include <limits.h>
-# define PROMPT (printf("%s ", "💥"))
+# define RED   "\x1B[31m"
+# define YEL   "\x1B[33m"
+# define CYN   "\x1B[36m"
+# define RESET "\x1B[0m"
+# define BOLD "\e[1m"
+# define PROMPT (printf(BOLD RED"❖"RESET))
 # define SPACES " \t\n\r\a"
 # define DELIM "|;"
 
