@@ -1,34 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   count_position.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
+/*   Created: 2017/04/23 00:48:07 by ashulha           #+#    #+#             */
+/*   Updated: 2017/04/23 00:48:09 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libftprintf.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+int		ft_count_num(char *p)
 {
-	unsigned char *new_ptr;
+	int i;
 
-	if (ptr && !size)
-	{
-		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))
-			return (NULL);
-		ft_memdel(&ptr);
-		return(new_ptr);
-	}
-	if (!(new_ptr = (unsigned char*)ft_memalloc(size)))
-		return (NULL);
-	if (ptr)
-	{
-		ft_memcpy(new_ptr, ptr, size);
-		ft_memdel(&ptr);
-	}
-	return (new_ptr);
+	i = 0;
+	while (*(p + i) >= '0' && *(p + i) <= '9')
+		i++;
+	return (i);
+}
+
+int		ft_count_flags(char *p)
+{
+	int i;
+
+	i = 0;
+	while (*(p + i) == '+' || *(p + i) == '-' || *(p + i) == ' '
+		|| *(p + i) == '#' || *(p + i) == '0' || *(p + i) == '*')
+		i++;
+	return (i);
 }

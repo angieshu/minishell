@@ -65,7 +65,9 @@ char		**ft_strtok(char *s, char *sep)
 		(s && chars) ? tok[i] = ft_strnew(chars) : 0;
 		while (s && j < chars && chars > 0)
 			tok[i][j++] = *(s++);
-		(tok[i] && chars) ? i++ : 0;
+		(tok[i] || chars) ? i++ : 0;
+		if (!*s)
+			break ;
 	}
 	tok[i] = NULL;
 	return (tok);

@@ -1,34 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   ft_strrev.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
+/*   Created: 2017/04/23 00:35:10 by ashulha           #+#    #+#             */
+/*   Updated: 2017/04/23 00:35:11 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+char	*ft_strrev(char *str)
 {
-	unsigned char *new_ptr;
+	int		length;
+	int		i;
+	char	temp;
 
-	if (ptr && !size)
+	length = 0;
+	while (str[length])
+		length++;
+	i = 0;
+	while (i < (length / 2))
 	{
-		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))
-			return (NULL);
-		ft_memdel(&ptr);
-		return(new_ptr);
+		temp = str[i];
+		str[i] = str[length - i - 1];
+		str[length - i - 1] = temp;
+		i++;
 	}
-	if (!(new_ptr = (unsigned char*)ft_memalloc(size)))
-		return (NULL);
-	if (ptr)
-	{
-		ft_memcpy(new_ptr, ptr, size);
-		ft_memdel(&ptr);
-	}
-	return (new_ptr);
+	return (str);
 }

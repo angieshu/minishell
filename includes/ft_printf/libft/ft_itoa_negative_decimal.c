@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   ft_itoa_negative_decimal.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
+/*   Created: 2017/04/23 00:36:55 by ashulha           #+#    #+#             */
+/*   Updated: 2017/04/23 00:36:57 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+char	*ft_itoa_negative_decimal(char *s)
 {
-	unsigned char *new_ptr;
+	long long	n;
+	int			i;
+	int			p;
 
-	if (ptr && !size)
+	n = 0;
+	p = 0;
+	i = ft_strlen(s);
+	while (--i >= 0)
 	{
-		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))
-			return (NULL);
-		ft_memdel(&ptr);
-		return(new_ptr);
+		if (s[i] == '1')
+			n += ft_power(2, p);
+		p++;
 	}
-	if (!(new_ptr = (unsigned char*)ft_memalloc(size)))
-		return (NULL);
-	if (ptr)
-	{
-		ft_memcpy(new_ptr, ptr, size);
-		ft_memdel(&ptr);
-	}
-	return (new_ptr);
+	return (ft_itoa_base(n, 10));
 }

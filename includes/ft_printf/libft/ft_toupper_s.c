@@ -1,34 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   t_toupper_s.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
+/*   Created: 2017/04/23 00:28:01 by ashulha           #+#    #+#             */
+/*   Updated: 2017/04/23 00:28:03 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+void	ft_toupper_s(char *s)
 {
-	unsigned char *new_ptr;
+	int i;
 
-	if (ptr && !size)
+	i = 0;
+	while (s[i])
 	{
-		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))
-			return (NULL);
-		ft_memdel(&ptr);
-		return(new_ptr);
+		if (s[i] >= 'a' && s[i] <= 'z')
+			s[i] = s[i] - 32;
+		i++;
 	}
-	if (!(new_ptr = (unsigned char*)ft_memalloc(size)))
-		return (NULL);
-	if (ptr)
-	{
-		ft_memcpy(new_ptr, ptr, size);
-		ft_memdel(&ptr);
-	}
-	return (new_ptr);
 }

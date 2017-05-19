@@ -1,34 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   ft_itoa_signed.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
+/*   Created: 2017/04/23 00:35:47 by ashulha           #+#    #+#             */
+/*   Updated: 2017/04/23 00:35:49 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+char	*ft_itoa_signed(intmax_t num)
 {
-	unsigned char *new_ptr;
+	uintmax_t	value;
+	long		i;
+	char		*s;
 
-	if (ptr && !size)
+	value = (num < 0) ? num * -1 : num;
+	i = 0;
+	if (num < 0)
+		i++;
+	while (value)
 	{
-		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))
-			return (NULL);
-		ft_memdel(&ptr);
-		return(new_ptr);
+		i++;
+		value /= 10;
 	}
-	if (!(new_ptr = (unsigned char*)ft_memalloc(size)))
-		return (NULL);
-	if (ptr)
+	value = (num < 0) ? num * -1 : num;
+	s = ft_strnew(i);
+	s[i] = 0;
+	while (value)
 	{
-		ft_memcpy(new_ptr, ptr, size);
-		ft_memdel(&ptr);
+		s[--i] = "0123456789"[value % 10];
+		value /= 10;
 	}
-	return (new_ptr);
+	if (i != 0)
+		s[0] = '-';
+	return (s);
 }

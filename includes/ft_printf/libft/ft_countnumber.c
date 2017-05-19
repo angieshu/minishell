@@ -1,34 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   ft_countnumber.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashulha <ashulha@student.us.org>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/05/15 16:24:51 by ashulha           #+#    #+#             */
-/*   Updated: 2017/05/15 16:24:54 by ashulha          ###   ########.fr       */
+/*   Created: 2017/04/23 00:37:43 by ashulha           #+#    #+#             */
+/*   Updated: 2017/04/23 00:37:44 by ashulha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	*ft_realloc(void *ptr, size_t size)
+long	ft_countnumber(intmax_t v, int b)
 {
-	unsigned char *new_ptr;
+	long	i;
 
-	if (ptr && !size)
+	i = 0;
+	if (v < 0)
 	{
-		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))
-			return (NULL);
-		ft_memdel(&ptr);
-		return(new_ptr);
+		i = i + 1;
+		v = v * -1;
 	}
-	if (!(new_ptr = (unsigned char*)ft_memalloc(size)))
-		return (NULL);
-	if (ptr)
+	while (v > 0)
 	{
-		ft_memcpy(new_ptr, ptr, size);
-		ft_memdel(&ptr);
+		i = i + 1;
+		v = v / b;
 	}
-	return (new_ptr);
+	return (i);
 }
