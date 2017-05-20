@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-//SET OLDPWD TO CUR DIR
-//SETENV TO NEXT CUR DIR
-
 int		cd_cmd(char	**a)
 {
 	char p[PATH_MAX + 1];
@@ -24,7 +21,9 @@ int		cd_cmd(char	**a)
 	i = -1;
 	while (++i < PATH_MAX)
 		p[i] = 0;
-	(a[2]) ? CD_ERNOPWD(a[1]) : 0;
+	i = 0;
+	while (a[i++]);
+	(i > 3) ? CD_ERNOPWD(a[1]) : 0;
 	(a)++;
 	if (!*a || !ft_strcmp(*a, "~") || ((*a)[0] == '~' && (*a)[1] == '/'))
 		ft_strncat(p, findEnv("~"), PATH_MAX);

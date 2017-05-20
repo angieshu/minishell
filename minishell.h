@@ -41,5 +41,7 @@ int		echo_cmd(char **args);
 int		checkString(char **args, char **buf);
 int		readArgs(char **args, char **buf);
 int		cd_cmd(char	**args);
-
+int		setenv_cmd(char	**args);
+void	free_env(char **env);
+int		unsetenv_cmd(char **args);
 #endif

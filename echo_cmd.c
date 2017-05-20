@@ -28,13 +28,25 @@ int		checkEnv(char **args, char **buf, int i)
 	
 	(findEnv(*args)[0] != 0) ? s = findEnv(*args) : 0;
 	while (*s)
-	{
-		(*buf)[i++] = *s;
-		s++;
-	}
+		(*buf)[i++] = *(s++);
 	while (**args && **args != '"' && **args != '\'')
 		(*args)++;
 	return (i);
+}
+
+char	quotes(char **s, char q)
+{
+	while (**s == '"' || **s == '\'')
+	{
+		if (q == **s)
+			q = 0;
+		else if (!q)
+			q = **s;
+		else
+			break ;
+		(*s)++;
+	}
+	return (q);
 }
 
 int		checkArg(char **s, char **buf, int flag)
@@ -48,16 +60,7 @@ int		checkArg(char **s, char **buf, int flag)
 	{
 		if (**s == '\\' && !*(++(*s)))
 			break ;
-		while (**s == '"' || **s == '\'')
-		{
-			if (q == **s)
-				q = 0;
-			else if (!q)
-				q = **s;
-			else
-				break ;
-			(*s)++;
-		}
+		q = quotes(s, q);
 		(**s == '$' || **s == '~') ?
 		(i = checkEnv(s, buf, i)) : ((**s) ? ((*buf)[i++] = **s) : 0);
 		(*s)++;
