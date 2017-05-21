@@ -12,16 +12,6 @@
 
 #include "minishell.h"
 
-int		freeCheck(char **buf, int i)
-{
-	if (!*buf || i == -1)
-	{
-		(*buf) ? free(*buf): 0;
-		return (-1);
-	}
-	return (0);
-}
-
 int		checkEnv(char **args, char **buf, int i)
 {
 	char *s;
@@ -85,12 +75,6 @@ int		readArgs(char **args, char **buf)
 			return (-1);
 		i = ft_strlen(*buf);
 		(*(++args)) ? ((*buf)[i++] = ' ') : 0;
-		if (!(i % PATH_MAX))
-		{
-			*buf = (char*)ft_realloc(*buf, ft_strlen(*buf) + PATH_MAX + 1);
-			if (freeCheck(buf, i) == -1)
-				return (-1);
-		}
 	}
 	return (0);
 }
@@ -138,6 +122,6 @@ int		echo_cmd(char **args)
 		return (-1);
 	ft_printf("%s", (!buf) ? "" : buf);
 	(newLine) ? 0 : ft_printf("\n");
-	(buf) ? free(buf) : 0;
+	// (buf) ? free(buf) : 0;
 	return (1);
 }

@@ -18,6 +18,7 @@
 # include <limits.h>
 # include <crt_externs.h>
 # include <sys/stat.h>
+# include <sys/wait.h>
 # define RED	"\x1B[31m"
 # define YEL	"\x1B[33m"
 # define CYN	"\x1B[36m"
@@ -26,10 +27,14 @@
 # define PROMPT (ft_printf(BOLD RED"❖"RESET))
 # define SPACES " \t\n\r\a"
 # define DELIM "|;"
-# define CD_ERNOTEXIST(p) ({ft_printf("cd: no such file or directory: %s\n", p); return (1);})
-# define CD_ERNOTDIR(p) ({ft_printf("cd: not a directory: %s\n", p); return (1);})
-# define CD_ERPERM(p) ({ft_printf("cd: permission denied: %s\n", p); return (1);})
-# define CD_ERNOPWD(p) ({ft_printf("cd: string not in pwd: %s\n", p); return (1);})
+# define NOTEXIST "cd: no such file or directory: %s\n"
+# define NOTDIR "cd: not a directory: %s\n"
+# define NOPERM "cd: permission denied: %s\n"
+# define NOPWD "cd: string not in pwd: %s\n"
+# define CD_ERNOTEXIST(p) ({ft_printf(NOTEXIST, p); return (1);})
+# define CD_ERNOTDIR(p) ({ft_printf(NOTDIR, p); return (1);})
+# define CD_ERPERM(p) ({ft_printf(NOPERM, p); return (1);})
+# define CD_ERNOPWD(p) ({ft_printf(NOPWD, p); return (1);})
 
 
 extern char **environ;
@@ -44,4 +49,6 @@ int		cd_cmd(char	**args);
 int		setenv_cmd(char	**args);
 void	free_env(char **env);
 int		unsetenv_cmd(char **args);
+int		launch(char **args);
+
 #endif

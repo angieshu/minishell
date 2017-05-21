@@ -57,7 +57,14 @@ char	*findEnv(char *name)
 
 int		exit_cmd(int flag)
 {
-	(flag) ? free(environ) : 0;
+	char ***en;
+
+	if (flag > 1)
+	{
+		en = &environ;
+		free_env(*en);
+		free(en);
+	}
 	return (0);
 }
 
@@ -71,31 +78,60 @@ int		env_cmd()
 	return (1);
 }
 
-
-// int		replace_existed(char **args, )
-
-int		execution(char **args, int flag)
+int		execution(char **args)
 {
-	if (!args)
-		return (1);
-	// (!ft_strncmp(args[0], "/bin/", 5)) ? (args[0] += 5) : 0;
-	if (!ft_strncmp(args[0], "cd", PATH_MAX))
-		return (cd_cmd(args));
-	if (!ft_strncmp(args[0], "echo", PATH_MAX))
-		return(echo_cmd(args));
-	if (!ft_strncmp(args[0], "env", PATH_MAX))
-		return(env_cmd());
-	if (!ft_strncmp(args[0], "setenv", PATH_MAX))
-		return(setenv_cmd(args));
-	if (!ft_strncmp(args[0], "unsetenv", PATH_MAX))
-		return(unsetenv_cmd(args));
-	if (!ft_strncmp(args[0], "pwd", PATH_MAX))
-		return(pwd_cmd(args));
-	if (!ft_strncmp(args[0], "exit", PATH_MAX))
-		return(exit_cmd(flag));
-	// else
-	// 	ft_printf()
-	return (0);
+	static int flag;
+	int f;
+
+	if (!args || !*args || !**args)
+		f = 1;
+	else if (!ft_strncmp(args[0], "cd", PATH_MAX))
+		f = cd_cmd(args);
+	else if (!ft_strncmp(args[0], "echo", PATH_MAX))
+		f = echo_cmd(args);
+	else if (!ft_strncmp(args[0], "env", PATH_MAX))
+		f = env_cmd();
+	else if (!ft_strncmp(args[0], "setenv", PATH_MAX))
+		f = setenv_cmd(args);
+	else if (!ft_strncmp(args[0], "unsetenv", PATH_MAX))
+		f = unsetenv_cmd(args);
+	else if (!ft_strncmp(args[0], "pwd", PATH_MAX))
+		f = pwd_cmd(args);
+	else if (!ft_strncmp(args[0], "exit", PATH_MAX))
+		f = exit_cmd(flag);
+	else
+		f = launch(args);
+	(f > flag) ? (flag = f) : 0;
+	return (f);
+}
+
+void	prompt(void)
+{
+	int i;
+	int last_slash;
+	char buf[PATH_MAX];
+
+	i = -1;
+	while (++i < PATH_MAX)
+		buf[i] = 0;
+	getcwd(buf, PATH_MAX);
+	i = -1;
+	while (buf[++i])
+	{
+		if (buf[i] == '/')
+			last_slash = i;
+	}
+	if (!ft_strcmp(buf, findEnv("$HOME")))
+	{
+		i = -1;
+		while ((buf[++i]))
+			buf[i] = 0;
+		buf[0] = '~';
+	}
+	// ft_printf(BOLD YEL"⚡︎"RESET);
+	ft_printf(BOLD"%s "RESET, (buf[0] == '~') ? buf :
+						(buf + ((last_slash) ? (last_slash + 1) : 0)));
+	ft_printf(BOLD YEL"⇢  "RESET);
 }
 
 int		main()
@@ -103,18 +139,20 @@ int		main()
 	char *line;
 	char **args;
 	int status;
-	int flag;
+	int i;
 
-	flag = 0;
 	status = 1;
-//UNSETENV OLDPWD TO CUR DIR
-
+	ft_printf("\n");
 	while (status)
 	{
-		ft_printf(BOLD YEL"⚡︎ "RESET);
+		i = -1;
+		prompt();
+		// ft_printf(BOLD YEL"⚡︎  "RESET);
 		get_next_line(0, &line);
-		args = (!line[0]) ? NULL : ft_strtok(line, SPACES);
-		status = execution(args, flag);
+		if (!line || !*line)
+			continue ;
+		args = ft_strtok(line, SPACES);
+		status = execution(args);
 		(line) ? free(line) : 0;
 		(args) ? free(args) : 0;
 	}
