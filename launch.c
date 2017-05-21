@@ -30,14 +30,14 @@ static void check_error(char *p, char *arg)
 		ft_printf("ash: command not found: %s\n", arg);
 }
 
-static void	process(char *ex, char **args)
+static void	process(char *ex, char **args, char **env)
 {
 	pid_t pid;
 
 	pid = fork();
 	if (pid == 0)
 	{
-		if (execve(ex, args, environ) == -1)
+		if (execve(ex, args, env) == -1)
 			ft_printf("ash: permission denied: %s\n", ex);
 		exit(-1);
 	}
@@ -50,14 +50,14 @@ static void	process(char *ex, char **args)
 		wait(&pid);
 }
 
-static void	find_cmd(char **args)
+static void	find_cmd(char **args, char **env)
 {
 	char **p;
 	char *path;
 	int i;
 	
 	i = -1;
-	p = ft_strtok(findEnv("$PATH"), ":");
+	p = ft_strtok(findEnv("$PATH", env), ":");
 	path = ft_strnew(PATH_MAX);
 	while (p[++i])
 	{
@@ -67,7 +67,7 @@ static void	find_cmd(char **args)
 		ft_strcat(path, args[0]);
 		if (access(path, F_OK) != -1)
 		{
-			process(path, args);
+			process(path, args, env);
 			break ;
 		}
 	}
@@ -79,11 +79,12 @@ static void	find_cmd(char **args)
 	free(p);
 }
 
-int		launch(char **args)
+int		launch(char **args, char **env)
 {
 	if (args[0] == NULL)
 		return (1);
-	(access(args[0], F_OK) != -1) ? process(args[0], args) : find_cmd(args);
+	(access(args[0], F_OK) != -1) ? process(args[0], args, env) :
+											find_cmd(args, env);
 	return (1);
 }
 

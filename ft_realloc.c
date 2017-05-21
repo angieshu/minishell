@@ -15,7 +15,7 @@
 void	*ft_realloc(void *ptr, size_t size)
 {
 	unsigned char *new_ptr;
-
+	
 	if (ptr && !size)
 	{
 		if (!(new_ptr = (unsigned char*)ft_memalloc(1)))

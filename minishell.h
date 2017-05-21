@@ -19,6 +19,8 @@
 # include <crt_externs.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 # define RED	"\x1B[31m"
 # define YEL	"\x1B[33m"
 # define CYN	"\x1B[36m"
@@ -41,14 +43,14 @@ extern char **environ;
 
 void	*ft_realloc(void *ptr, size_t size);
 char	**ft_strtok(char *s, char *sep);
-char	*findEnv(char *name);
-int		echo_cmd(char **args);
-int		checkString(char **args, char **buf);
-int		readArgs(char **args, char **buf);
-int		cd_cmd(char	**args);
-int		setenv_cmd(char	**args);
+char	*findEnv(char *name, char **env);
+int		echo_cmd(char **args, char **env);
+int		readArgs(char **args, char **buf, char **env);
+int		cd_cmd(char	**args, char **env);
+int		setenv_cmd(char	**args, char **env);
 void	free_env(char **env);
-int		unsetenv_cmd(char **args);
-int		launch(char **args);
+int		unsetenv_cmd(char **args, char **env);
+int		checkString(char **args, char **buf, char **env);
+int		launch(char **args, char **env);
 
 #endif

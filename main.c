@@ -18,8 +18,8 @@ void		free_env(char **env)
 	int i;
 
 	i = 0;
-	while (env[i])
-		free(env[i++]);
+	// while (env[i])
+	// 	free(env[i++]);
 	free(env);
 	env = NULL;
 }
@@ -36,9 +36,8 @@ int		pwd_cmd(char **args)
 	(i == 1) ? ft_printf("%s\n", getcwd(buf, PATH_MAX)) : 0;
 	return (1);
 }
-// int		help_cmd(char **args)
 
-char	*findEnv(char *name)
+char	*findEnv(char *name, char **env)
 {
 	int i;
 	char *p;
@@ -46,66 +45,70 @@ char	*findEnv(char *name)
 	i = -1;
 	(ft_strlen(name) == 1 && name[0] == '~') ? name = "$HOME" : 0;
 	name += (name[0] == '$');
-	while (environ[++i])
+	while (env[++i])
 	{
-		if (!ft_strncmp(name, environ[i], ft_strlen(name)))
-			if (environ[i][ft_strlen(name)] == '=')
-				return (ft_strchr(environ[i], '=') + 1); 
+		if (!ft_strncmp(name, env[i], ft_strlen(name)))
+			if (env[i][ft_strlen(name)] == '=')
+				return (ft_strchr(env[i], '=') + 1); 
 	}
 	return ("");
 }
 
-int		exit_cmd(int flag)
+int		exit_cmd()
 {
-	char ***en;
-
-	if (flag > 1)
-	{
-		en = &environ;
-		free_env(*en);
-		free(en);
-	}
 	return (0);
 }
 
-int		env_cmd()
+int		env_cmd(char **env)
 {
 	int i;
 
 	i = 0;
-	while (environ[i])
-		ft_printf("%s\n", environ[i++]);
+	while (env[i])
+		ft_printf("%s\n", env[i++]);
 	return (1);
 }
 
-int		execution(char **args)
+void create_env(char ***env)
 {
-	static int flag;
-	int f;
+	int i;
 
-	if (!args || !*args || !**args)
-		f = 1;
-	else if (!ft_strncmp(args[0], "cd", PATH_MAX))
-		f = cd_cmd(args);
-	else if (!ft_strncmp(args[0], "echo", PATH_MAX))
-		f = echo_cmd(args);
-	else if (!ft_strncmp(args[0], "env", PATH_MAX))
-		f = env_cmd();
-	else if (!ft_strncmp(args[0], "setenv", PATH_MAX))
-		f = setenv_cmd(args);
-	else if (!ft_strncmp(args[0], "unsetenv", PATH_MAX))
-		f = unsetenv_cmd(args);
-	else if (!ft_strncmp(args[0], "pwd", PATH_MAX))
-		f = pwd_cmd(args);
-	else if (!ft_strncmp(args[0], "exit", PATH_MAX))
-		f = exit_cmd(flag);
-	else
-		f = launch(args);
-	(f > flag) ? (flag = f) : 0;
-	return (f);
+	i = -1;
+	while (environ[++i]);
+	(*env) = (char**)ft_memalloc(sizeof(char*) * i);
+	i = -1;
+	while (environ[++i])
+	{
+		(*env)[i] = ft_strdup(environ[i]);
+	}
+	(*env)[i] = NULL;
+	i = -1;
 }
 
-void	prompt(void)
+int		execution(char **args, char **env)
+{
+	if (!args || !*args || !**args)
+		return (1);
+	else if (!ft_strncmp(args[0], "cd", PATH_MAX))
+		return (cd_cmd(args, env));
+	else if (!ft_strncmp(args[0], "echo", PATH_MAX))
+		return (echo_cmd(args, env));
+	else if (!ft_strncmp(args[0], "env", PATH_MAX))
+		return (env_cmd(env));
+	else if (!ft_strncmp(args[0], "setenv", PATH_MAX))
+		return (setenv_cmd(args, env));
+	else if (!ft_strncmp(args[0], "unsetenv", PATH_MAX))
+		return (unsetenv_cmd(args, env));
+	else if (!ft_strncmp(args[0], "pwd", PATH_MAX))
+		return (pwd_cmd(args));
+	else if (!ft_strncmp(args[0], "exit", PATH_MAX))
+		return (exit_cmd());
+	else
+		return (launch(args, env));
+	return (0);
+}
+
+void	prompt(char **env)
 {
 	int i;
 	int last_slash;
@@ -121,39 +124,44 @@ void	prompt(void)
 		if (buf[i] == '/')
 			last_slash = i;
 	}
-	if (!ft_strcmp(buf, findEnv("$HOME")))
+	if (!ft_strcmp(buf, findEnv("$HOME", env)))
 	{
 		i = -1;
 		while ((buf[++i]))
 			buf[i] = 0;
 		buf[0] = '~';
 	}
-	// ft_printf(BOLD YEL"⚡︎"RESET);
 	ft_printf(BOLD"%s "RESET, (buf[0] == '~') ? buf :
 						(buf + ((last_slash) ? (last_slash + 1) : 0)));
-	ft_printf(BOLD YEL"⇢  "RESET);
+	// ft_printf(BOLD YEL"⇢  "RESET);
 }
 
 int		main()
 {
 	char *line;
 	char **args;
+	char **env;
 	int status;
-	int i;
 
 	status = 1;
-	ft_printf("\n");
+	create_env(&env);
+	int i = -1;
 	while (status)
 	{
-		i = -1;
-		prompt();
-		// ft_printf(BOLD YEL"⚡︎  "RESET);
-		get_next_line(0, &line);
+		prompt(env);
+		rl_bind_key('\t', rl_complete);
+		// get_next_line(0, &line);
+		line = readline(BOLD YEL"⇢  "RESET);
 		if (!line || !*line)
 			continue ;
 		args = ft_strtok(line, SPACES);
-		status = execution(args);
-		(line) ? free(line) : 0;
-		(args) ? free(args) : 0;
+		add_history(line);
+		status = execution(args, env);
+		if (!line || !*line)
+			continue ;
+		free(line);
+		// (line) ? free(line) : 0;
+		// (args) ? free(args) : 0;
 	}
+	free_env(env);
 }
