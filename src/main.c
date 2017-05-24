@@ -12,21 +12,22 @@
 
 #include "minishell.h"
 
-static void create_env(char ***env)
+static void	create_env(char ***env, char **envp)
 {
 	int i;
 	int j;
 
 	i = -1;
-	while (environ[++i]);
+	while (envp[++i])
+		NULL;
 	(*env) = (char**)ft_memalloc(sizeof(char*) * i);
 	i = -1;
-	while (environ[++i])
+	while (envp[++i])
 	{
 		(*env)[i] = (char*)ft_memalloc(PATH_MAX + 1);
 		j = -1;
-		while (environ[i][++j])
-			(*env)[i][j] = environ[i][j];
+		while (envp[i][++j])
+			(*env)[i][j] = envp[i][j];
 		(*env)[i][j] = 0;
 	}
 	(*env)[i] = NULL;
@@ -35,9 +36,9 @@ static void create_env(char ***env)
 
 static void	prompt(char **env)
 {
-	int i;
-	int last_slash;
-	char buf[PATH_MAX];
+	int		i;
+	int		sl;
+	char	buf[PATH_MAX];
 
 	i = -1;
 	while (++i < PATH_MAX)
@@ -47,30 +48,55 @@ static void	prompt(char **env)
 	while (buf[++i])
 	{
 		if (buf[i] == '/')
-			last_slash = i;
+			sl = i;
 	}
-	if (!ft_strcmp(buf, findEnv("$HOME", env)))
+	if (!ft_strcmp(buf, find_env("$HOME", env)))
 	{
 		i = -1;
 		while ((buf[++i]))
 			buf[i] = 0;
 		buf[0] = '~';
 	}
-	ft_printf(BOLD"%s ", (buf[0] == '~') ? buf :
-				(buf + ((last_slash) ? (last_slash + 1) : 0)));
+	(buf[0] == '~' || (buf[0] && !sl)) ? ft_printf(BOLD"%s ", buf) : 0;
+	(buf[0] != '~' && sl) ? ft_printf(BOLD"%s ", (buf + sl + 1)) : 0;
 }
 
-int		main()
+static char	**run_commands(char **comands, char **env)
 {
-	char *line;
-	char **comands;
-	char **args;
-	char **env;
-	int status;
+	char	**args;
+	int		status;
+	int		i;
+	int		j;
 
 	status = 1;
-	create_env(&env);
-	while (status)
+	i = 0;
+	j = 0;
+	while (comands[j])
+	{
+		args = ft_strtok(comands[j], SPACES);
+		rl_bind_key('\t', rl_complete);
+		env = execution(args, env);
+		free(comands[j]);
+		j++;
+		while (args[i])
+			free(args[i++]);
+		(args) ? free(args) : 0;
+		if (!env)
+			return (NULL);
+	}
+	return (env);
+}
+
+int			main(int ac, char **args, char **envp)
+{
+	char	*line;
+	char	**comands;
+	char	**env;
+
+	(void)ac;
+	(void)args;
+	create_env(&env, envp);
+	while (env)
 	{
 		prompt(env);
 		set_dir(env, "PWD");
@@ -78,18 +104,11 @@ int		main()
 		line = readline(YEL"⇢  "RESET);
 		if (!line || !*line)
 			continue ;
+		add_history(line);
 		comands = ft_strtok(line, ";");
-		while (*comands)
-		{
-			args = ft_strtok(*comands, SPACES);
-			add_history(line);
-			rl_bind_key('\t', rl_complete);
-			status = execution(args, env);
-			free(*comands);
-			comands++;
-			(args) ? free(args) : 0;
-		}
+		env = run_commands(comands, env);
+		free(comands);
 		free(line);
 	}
-	free(env);
+	return (0);
 }

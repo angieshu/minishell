@@ -12,24 +12,24 @@
 
 #include "minishell.h"
 
-char	*cmd[] = {
+char	*g_cmd[] = {
 	"cd", "echo", "env", "setenv", "unsetenv", "pwd", "exit",
-	"emacs", "vim", "mkdir", "ls", "rm", "rmdir", "clear", 
+	"emacs", "vim", "mkdir", "ls", "rm", "rmdir", "clear",
 	"locate", "touch", "man", "mv", "gcc", "cat", (char*)NULL
 };
 
 static char	*command_generator(const char *text, int state)
 {
-	static int i;
-	static int len;
-	char *name;
+	static int	i;
+	static int	len;
+	char		*name;
 
 	if (!state)
 	{
 		i = 0;
 		len = ft_strlen(text);
 	}
-	while (cmd[i] && (name = cmd[i]))
+	while (g_cmd[i] && (name = g_cmd[i]))
 	{
 		i++;
 		if (ft_strncmp(name, text, len) == 0)
@@ -45,12 +45,12 @@ static char	**ash_complition(const char *text, int start, int end)
 	matches = NULL;
 	(void)end;
 	if (start == 0)
-		matches = rl_completion_matches (text, command_generator);
+		matches = rl_completion_matches(text, command_generator);
 	return (matches);
 }
 
 void		initialize_readline(void)
 {
 	rl_readline_name = "minishell";
-	rl_attempted_completion_function = ash_complition; 
+	rl_attempted_completion_function = ash_complition;
 }

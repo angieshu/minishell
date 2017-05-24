@@ -12,107 +12,67 @@
 
 #include "minishell.h"
 
-char	quotes(char **s, char q)
+static int	check_arg(char **s, int j, char **env)
 {
-	while (**s == '"' || **s == '\'')
+	int			k;
+
+	k = 0;
+	while (s[j][k])
 	{
-		if (q == **s)
-			q = 0;
-		else if (!q)
-			q = **s;
+		if (s[j][k] == '"' || s[j][k] == '\'' || s[j][k] == '\\')
+			k++;
+		if (!s[j][k])
+			break ;
+		if ((s[j][k] == '$' || s[j][k] == '~') &&
+			(k = check_env(s[j], k, env)) == -1)
+			return (-1);
 		else
-			break ;
-		(*s)++;
-	}
-	return (q);
-}
-
-int		checkArg(char **s, char **buf, int flag, char **env)
-{
-	int i;
-	static char q;
-
-	(q != '"' && q != '\'') ? (q = 0) : 0;
-	i = ft_strlen(*buf);
-	while (**s)
-	{
-		if (**s == '\\' && !*(++(*s)))
-			break ;
-		q = quotes(s, q);
-		if (!**s)
-			break;
-		if ((**s == '$' || **s == '~') &&
-			(i = checkEnv(s, buf, i, env)) == -1)
-			return (-1);
-		else 
-			((**s) ? ((*buf)[i++] = **s) : 0);
-		(*s)++;
-	}
-	if (!(q && flag))
-		return (0);
-	(*buf)[i++] = '\n';
-	ft_printf("dquote> ");
-	return (checkString(s, buf, env));
-}
-
-int		readArgs(char **args, char **buf, char **env)
-{
-	int i;
-	int flag;
-
-	flag = 0;
-	while (*args)
-	{
-		(*(args + 1)) ? (flag = 0) : (flag = 1);
-		if (checkArg(args, buf, flag, env) == -1)
-			return (-1);
-		i = ft_strlen(*buf);
-		(*(++args)) ? ((*buf)[i++] = ' ') : 0;
+			(s[j][k] ? ft_printf("%c", s[j][k]) : 0);
+		k++;
 	}
 	return (0);
 }
 
-int		checkString(char **args, char **buf, char **env)
+int			read_args(char **args, int j, char **env)
+{
+	while (args[j])
+	{
+		if (check_arg(args, j, env) == -1)
+			return (-1);
+		(args[++j]) ? ft_printf(" ") : 0;
+	}
+	return (0);
+}
+
+int			check_str(char **args, int j, char **env)
 {
 	char *s;
 
 	s = NULL;
-	(!*buf) ? *buf = ft_strnew(PATH_MAX) : 0;
-	if (**args)
+	if (args[j][0])
 	{
-		if (readArgs(args, buf, env) == -1)
+		if (read_args(args, j, env) == -1)
 			return (-1);
-	}
-	else
-	{
-		get_next_line(0, &s);
-		if (checkArg(&s, buf, 1, env) == -1)
-			return (-1);	
 	}
 	return (0);
 }
 
-int		echo_cmd(char **args, char **env)
+char		**echo_cmd(char **a, char **env)
 {
-	int i;
-	int newLine;
-	char *buf;
-	char **a;
-
-	a = args;
+	int		i;
+	int		j;
+	int		new_line;
 
 	i = 1;
-	buf = NULL;
+	j = 0;
 	if (!a[1] || !a[1][0])
 	{
 		ft_printf("\n");
-		return (1);
+		return (env);
 	}
-	newLine = (!ft_strncmp("-n", *(++a), PATH_MAX)) ? 1 : 0;
-	(newLine) ? (a)++ : 0;
-	checkString(a, &buf, env);
-	ft_printf("%s", (!buf) ? "" : buf);
-	(newLine) ? 0 : ft_printf("\n");
-	(buf) ? free(buf) : 0;
-	return (1);
+	new_line = (!ft_strncmp("-n", a[++j], PATH_MAX)) ? 1 : 0;
+	(new_line) ? j++ : 0;
+	check_str(a, j, env);
+	(new_line) ? 0 : ft_printf("\n");
+	return (env);
 }

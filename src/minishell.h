@@ -29,32 +29,28 @@
 # define NOTDIR "cd: not a directory: %s\n"
 # define NOPERM "cd: permission denied: %s\n"
 # define NOPWD "cd: string not in pwd: %s\n"
-# define CD_ERNOTEXIST(p) ({ft_printf(NOTEXIST, p); return (1);})
-# define CD_ERNOTDIR(p) ({ft_printf(NOTDIR, p); return (1);})
-# define CD_ERPERM(p) ({ft_printf(NOPERM, p); return (1);})
-# define CD_ERNOPWD(p) ({ft_printf(NOPWD, p); return (1);})
+# define CD_ERNOTEXIST(p, e) ({ft_printf(NOTEXIST, p); return (e);})
+# define CD_ERNOTDIR(p, e) ({ft_printf(NOTDIR, p); return (e);})
+# define CD_ERPERM(p, e) ({ft_printf(NOPERM, p); return (e);})
+# define CD_ERNOPWD(p, e) ({ft_printf(NOPWD, p); return (e);})
 
-extern char **environ;
-
-char	*findEnv(char *name, char **env);
-int		echo_cmd(char **args, char **env);
-int		readArgs(char **args, char **buf, char **env);
-int		checkString(char **args, char **buf, char **env);
+char	*find_env(char *name, char **env);
+int		read_args(char **args, int j, char **env);
+int		check_str(char **args, int j, char **env);
 void	set_dir(char **env, char *dirname);
-int		checkEnv(char **args, char **buf, int i, char **env);
+int		check_env(char *args, int k, char **env);
 
 void	initialize_readline(void);
-int		execution(char **args, char **env);
-int		launch(char **args, char **env);
-/*
----------------- ⚡︎ Commands ⚡︎----------------
-*/
+char	**execution(char **args, char **env);
+void	free_env(char **env);
 
-int		cd_cmd(char	**args, char **env);
-int		setenv_cmd(char	**args, char **env);
-int		unsetenv_cmd(char **args, char **env);
-int		env_cmd(char **args);
-int		exit_cmd();
-int		pwd_cmd(char **args);
+char	**launch(char **args, char **env);
+char	**echo_cmd(char **args, char **env);
+char	**cd_cmd(char	**args, char **env);
+char	**setenv_cmd(char	**args, char **env);
+char	**unsetenv_cmd(char **args, char **env);
+char	**env_cmd(char **args);
+char	**exit_cmd(char **env);
+char	**pwd_cmd(char **args, char **env);
 
 #endif

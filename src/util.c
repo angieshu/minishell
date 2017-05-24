@@ -12,7 +12,17 @@
 
 #include "minishell.h"
 
-char	*findEnv(char *name, char **env)
+void	free_env(char **env)
+{
+	int i;
+
+	i = 0;
+	while (env[i])
+		free(env[i++]);
+	free(env);
+}
+
+char	*find_env(char *name, char **env)
 {
 	int i;
 
@@ -23,7 +33,7 @@ char	*findEnv(char *name, char **env)
 	{
 		if (!ft_strncmp(name, env[i], ft_strlen(name)))
 			if (env[i][ft_strlen(name)] == '=')
-				return (ft_strchr(env[i], '=') + 1); 
+				return (ft_strchr(env[i], '=') + 1);
 	}
 	return ("");
 }
@@ -39,19 +49,20 @@ void	set_dir(char **env, char *dirname)
 	getcwd(a[2], PATH_MAX);
 	a[3] = 0;
 	setenv_cmd(a, env);
+	free(a[1]);
+	free(a[2]);
 	free(a);
 }
 
-int		checkEnv(char **args, char **buf, int i, char **env)
+int		check_env(char *args, int k, char **env)
 {
 	char *s;
-	
-	(findEnv(*args, env)[0] != 0) ? s = findEnv(*args, env) : 0;
-	if (findEnv(*args, env)[0] == 0)
+
+	(find_env(args, env)[0] != 0) ? s = find_env(args, env) : 0;
+	if (find_env(args, env)[0] == 0)
 		return (-1);
-	while (*s)
-		(*buf)[i++] = *(s++);
-	while (**args && **args != '"' && **args != '\'')
-		(*args)++;
-	return (i);
+	ft_printf("%s", s);
+	while (args[k])
+		k++;
+	return (k);
 }

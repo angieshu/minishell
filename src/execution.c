@@ -12,10 +12,10 @@
 
 #include "minishell.h"
 
-int		execution(char **args, char **env)
+char	**execution(char **args, char **env)
 {
 	if (!args || !*args || !**args)
-		return (1);
+		return (env);
 	else if (!ft_strncmp(args[0], "cd", PATH_MAX))
 		return (cd_cmd(args, env));
 	else if (!ft_strncmp(args[0], "echo", PATH_MAX))
@@ -27,10 +27,10 @@ int		execution(char **args, char **env)
 	else if (!ft_strncmp(args[0], "unsetenv", PATH_MAX))
 		return (unsetenv_cmd(args, env));
 	else if (!ft_strncmp(args[0], "pwd", PATH_MAX))
-		return (pwd_cmd(args));
+		return (pwd_cmd(args, env));
 	else if (!ft_strncmp(args[0], "exit", PATH_MAX))
-		return (exit_cmd());
+		return (exit_cmd(env));
 	else
 		return (launch(args, env));
-	return (0);
+	return (env);
 }

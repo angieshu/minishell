@@ -14,9 +14,13 @@ NAME = minishell
 
 SRC = src/*.c
 
-LIBFT = includes/libft/libft.a
+L_DIR = includes/libft/
 
-PRINTF = includes/ft_printf/libftprintf.a
+FT_DIR = includes/ft_printf/
+
+LIBFT = $(L_DIR)libft.a
+
+PRINTF = $(FT_DIR)libftprintf.a
 
 GNL = includes/gnl/get_next_line.c
 
@@ -30,13 +34,13 @@ $(NAME):
 
 clean:
 	@echo "Cleaning up *.o files..."
-	@make -C includes/libft clean
-	@make -C includes/ft_printf clean
+	@make -C $(L_DIR) clean
+	@make -C $(FT_DIR) clean
 
 fclean: clean
 	@echo "Removing *.a files and executable..."
-	@make -C includes/libft fclean
-	@make -C includes/ft_printf fclean
+	@make -C $(L_DIR) fclean
+	@make -C $(FT_DIR) fclean
 	@rm -rf $(NAME)
 
 re: fclean all

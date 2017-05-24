@@ -12,17 +12,18 @@
 
 #include "minishell.h"
 
-int		exit_cmd()
+char	**exit_cmd(char **env)
 {
-	return (0);
+	free_env(env);
+	return (NULL);
 }
 
-int		env_cmd(char **env)
+char	**env_cmd(char **env)
 {
 	int i;
 
 	i = 0;
 	while (env[i])
 		ft_printf("%s\n", env[i++]);
-	return (1);
+	return (env);
 }
