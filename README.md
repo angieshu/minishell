@@ -23,3 +23,5 @@ Bonuses:
 - history;
 - prompt shows current folder;
 - nice design.
+
+For more information about project please check out [minishell.en-2.pdf](https://github.com/angieshu/minishell/files/1161311/minishell.en-2.pdf).
