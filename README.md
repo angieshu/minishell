@@ -22,4 +22,4 @@ Bonuses:
 - separation of commands with ";";
 - history;
 - prompt shows current folder;
-- nice design;
+- nice design.
