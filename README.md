@@ -32,7 +32,7 @@ Simply clone repository, go to the cloned repository, and run following commands
 ```
 make
 ./minishell
-``
+```
 
 ## Author
 
